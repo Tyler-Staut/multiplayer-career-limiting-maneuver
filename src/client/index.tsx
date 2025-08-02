@@ -88,12 +88,67 @@ function App() {
     };
   }, []);
 
+  // Konami code detection
+  const [clmTriggered, setClmTriggered] = useState(false);
+  useEffect(() => {
+    const konami = [
+      "ArrowUp",
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowLeft",
+      "ArrowRight",
+      "b",
+      "a",
+    ];
+    let pos = 0;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key.toLowerCase() === konami[pos].toLowerCase()) {
+        pos++;
+        if (pos === konami.length) {
+          setClmTriggered(true);
+          pos = 0;
+        }
+      } else {
+        pos = 0;
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <div className="App">
-      <h1>Where's everyone at?</h1>
+      {clmTriggered && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.8)",
+            color: "#fff",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 32,
+            flexDirection: "column",
+            textAlign: "center",
+          }}
+          onClick={() => setClmTriggered(false)}
+        >
+          <div>You've just triggered a Career Limiting Maneuver™!</div>
+          <div>Your actions have been logged and reported.</div>
+        </div>
+      )}
+      <h1>Who Else is Pulling a Career Limiting Maneuver?</h1>
       {counter !== 0 ? (
         <p>
-          <b>{counter}</b> {counter === 1 ? "person" : "people"} connected.
+          <b>{counter}</b> {counter === 1 ? "person" : "people"} limiting their career outlooks.
         </p>
       ) : (
         <p>&nbsp;</p>
@@ -102,15 +157,21 @@ function App() {
       {/* The canvas where we'll render the globe */}
       <canvas
         ref={canvasRef as LegacyRef<HTMLCanvasElement>}
-        style={{ width: 400, height: 400, maxWidth: "100%", aspectRatio: 1 }}
+        style={{
+          width: 400,
+          height: 400,
+          maxWidth: "100%",
+          aspectRatio: 1,
+        }}
       />
 
-      {/* Let's give some credit */}
+      {/* Let's give some credit 
       <p>
         Powered by <a href="https://cobe.vercel.app/">🌏 Cobe</a>,{" "}
         <a href="https://www.npmjs.com/package/phenomenon">Phenomenon</a> and{" "}
         <a href="https://npmjs.com/package/partyserver/">🎈 PartyServer</a>
       </p>
+      */}
     </div>
   );
 }
